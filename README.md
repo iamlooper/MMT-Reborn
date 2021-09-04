@@ -2,11 +2,11 @@
 
 <div align="center">
   <!-- Version -->
-    <img src="https://img.shields.io/badge/Version-v1.0-blue.svg?longCache=true&style=popout-square"
+    <img src="https://img.shields.io/badge/Version-v1.0-green.svg?longCache=true&style=popout-square"
       alt="Version" />
-  <!-- Codename -->
-    <img src="https://img.shields.io/badge/B4ØK3Ñ-green.svg?longCache=true&style=flat-square"
-      alt="Codename" />
+  <!-- CodeName -->
+    <img src="https://img.shields.io/badge/B4ØK3Ñ-yellow.svg?longCache=true&style=flat-square"
+      alt="CodeName" />
 
 <div align="center">
   <strong>MMT Bourne, a simple, customizable, easy-to-use magisk module template.
