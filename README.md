@@ -6,7 +6,7 @@
       alt="Version" />
   <!-- Codename -->
     <img src="https://img.shields.io/badge/B4ØK3Ñ-green.svg?longCache=true&style=flat-square"
-      alt="_time_stamp_" />
+      alt="Codename" />
 
 <div align="center">
   <strong>MMT Bourne, a simple, customizable, easy-to-use magisk module template.
