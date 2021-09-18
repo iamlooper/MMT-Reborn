@@ -13,5 +13,5 @@
 </div>
 
 ### Usage
-- Read setup.sh custom config vars and try to fork repo for better understanding
-- Don't remove template logic comments
+- Read setup.sh custom config vars and don't fork.
+- Don't remove template logic comments.
