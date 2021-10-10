@@ -14,18 +14,15 @@ rm -rf $TMPDIR 2>/dev/null
 mkdir -p $TMPDIR
 
 # echo before loading util_functions
-ui_print() { echo "$1"; }
+ui_print(){ 
+echo "$1"
+}
 
-require_new_magisk() {
+require_new_magisk(){
   ui_print "*******************************"
   ui_print " Please install Magisk v19.0+! "
   ui_print "*******************************"
   exit 1
-}
-
-is_setup_script() {
-  unzip -l "$ZIPFILE" setup.sh | grep -q setup.sh
-  return $?
 }
 
 ####################
@@ -67,7 +64,9 @@ fi
 
 # Extract prop file
 unzip -o "$ZIPFILE" module.prop -d $TMPDIR >&2
-[ ! -f $TMPDIR/module.prop ] && abort "[!] Unable to extract zip file!"
+if [ ! -f $TMPDIR/module.prop ]; then
+abort "[!] Unable to extract zip file!"
+fi
 
 $BOOTMODE && MODDIRNAME=modules_update || MODDIRNAME=modules
 MODULEROOT=$NVBASE/$MODDIRNAME
@@ -83,82 +82,43 @@ mkdir -p $MODPATH
 # INSTALLATION
 ##############
 
-# Extract banner to $MODPATH
-if [[ "$BANNER_PRINT" == "true" ]]; then
-    if [[ -e "$MODPATH/banner" ]]; then
-     unzip -o "$ZIPFILE" banner -d $MODPATH >&2
-    fi
-fi
-
-# Extract service.sh to $MODPATH
-if [[ -e "$MODPATH/service.sh" ]]; then
-unzip -o "$ZIPFILE" service.sh -d $MODPATH >&2
-fi
-
-# Extract post-fs-data.sh to $MODPATH
-if [[ -e "$MODPATH/post-fs-data.sh" ]]; then
-unzip -o "$ZIPFILE" post-fs-data.sh -d $MODPATH >&2
-fi
-
-# Extract system.prop to $MODPATH
-if [[ -e "$MODPATH/system.prop" ]]; then
-unzip -o "$ZIPFILE" system.prop -d $MODPATH >&2
-fi
-
-# Extract essential files
-if is_setup_script; then
-unzip -oj "$ZIPFILE" module.prop setup.sh uninstall.sh -d $TMPDIR >&2
+# Extract 01
+unzip -o "$ZIPFILE" 'addon/*' setup.sh inject.sh -d $TMPDIR >&2
 
 # Load install script
 . $TMPDIR/setup.sh
 
-# Remove all old files before doing installation if want to
-    if [[ "$CLEANSERVICE" = "true" ]]; then
-     rm -rf /data/adb/modules/${MODID}/* 2>/dev/null
+if [ "$SKIPMOUNT" = "true" ]; then
+touch "$MODPATH/skip_mount"
+fi
 
 # Enable debugging if true
-    elif [[ "$DEBUG" == "true" ]]; then
-     set -x
-    else
-     set +x
-    fi
+if [ "$DEBUG" = "true" ]; then
+set -x
+else
+set +x
+fi
 
-# Banner print if true
-    if [[ -e "$MODPATH/banner" ]]; then
-     awk '{print}' "$MODPATH"/banner
-    fi
+# Remove all old files before doing installation if want to
+if [ "$CLEANSERVICE" = "true" ]; then
+rm -rf /data/adb/modules/${MODID}/*
+fi 
 
 # Callback 01
 mod_info_print
 
-# Unzipping under auto extraction
-    if [[ "$AUTO_UNZIP" == "true" ]]; then
-        if [[ -e "$MODPATH/addon" ]] ; then
-         unzip -o "$ZIPFILE" 'addon/*' -d $TMPDIR >&2
+# Extract 02
+unzip -o "$ZIPFILE" -x 'META-INF/*' 'addon/*' setup.sh inject.sh -d $MODPATH >&2
+ui_print "[*] Extracting module files..."
 
-        elif [[ -e "$MODPATH/system" ]]; then
-         unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
-        fi
-    fi
+# Load vol key selector
+. "$TMPDIR/addon/Volume-Key-Selector/install.sh"
 
-# Callback 02
-install_module
-
-# Custom uninstaller
-    if [[ -f $TMPDIR/uninstall.sh ]]; then 
-     cp -af $TMPDIR/uninstall.sh $MODPATH/uninstall.sh
-    fi
-
-# Module info
-cp -af $TMPDIR/module.prop $MODPATH/module.prop
+# Load main
+. "$TMPDIR/inject.sh"
 
 # Set permissions
 set_permissions
-
-else
-ui_print "[*] Module setup script not found, exiting installation..."
-exit 1
-fi
 
 # Handle replace folders
 for TARGET in $REPLACE; do
@@ -169,7 +129,7 @@ done
 if $BOOTMODE; then
   # Update info for Magisk Manager
   mktouch $NVBASE/modules/$MODID/update
-  cp -af $MODPATH/module.prop $NVBASE/modules/$MODID/module.prop
+  cp -af "$MODPATH/module.prop" "$NVBASE/modules/$MODID/module.prop"
 fi
 
 # Copy over custom sepolicy rules
@@ -177,11 +137,13 @@ if [ -f $MODPATH/sepolicy.rule -a -e $PERSISTDIR ]; then
   ui_print "[*] Installing custom sepolicy patch"
   PERSISTMOD=$PERSISTDIR/magisk/$MODID
   mkdir -p $PERSISTMOD
-  cp -af $MODPATH/sepolicy.rule $PERSISTMOD/sepolicy.rule
+  cp -af "$MODPATH/sepolicy.rule" "$PERSISTMOD/sepolicy.rule"
 fi
 
 # Remove stuffs that don't belong to modules
-rm -rf $MODPATH/LICENSE
+rm -rf "$MODPATH/LICENSE"
+rm -rf "$MODPATH/README.md"
+rm -rf "$MODPATH/changelog"
 
 ##############
 # Finalizing
