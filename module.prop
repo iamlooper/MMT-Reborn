@@ -1,7 +1,6 @@
 id=mmt_bourne
 name=MMT-BOURNE
-version=v1.0
-versionCode=09
+version=v1.1
+versionCode=18
 author=@iamlooper
-description=MMT-BOURNE, a simple, customizable and easy-to-use magisk module template. 
-codeName=B4ØK3Ñ
+description=MMT-BOURNE, a simple, customizable and easy-to-use magisk module template.

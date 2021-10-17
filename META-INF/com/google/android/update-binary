@@ -4,14 +4,14 @@
 # INIT
 ######
 
-umask 022
+umask 0022
 
 # Global vars
-TMPDIR=/dev/tmp
-PERSISTDIR=/sbin/.magisk/mirror/persist
+TMPDIR="/dev/tmp"
+PERSISTDIR="/sbin/.magisk/mirror/persist"
 
-rm -rf $TMPDIR 2>/dev/null
-mkdir -p $TMPDIR
+rm -rf "$TMPDIR" 2>/dev/null
+mkdir -p "$TMPDIR"
 
 # echo before loading util_functions
 ui_print(){ 
@@ -25,6 +25,10 @@ require_new_magisk(){
   exit 1
 }
 
+load_vksel(){
+. "$MODPATH/addon/Volume-Key-Selector/install.sh"
+}
+
 ####################
 # SETUP ENVIRONMENT
 ####################
@@ -35,12 +39,7 @@ ZIPFILE=$3
 mount /data 2>/dev/null
 
 # Load utility functions
-if [ -f /data/adb/magisk/util_functions.sh ]; then
-  . /data/adb/magisk/util_functions.sh
-  NVBASE=/data/adb
-else
-  require_new_magisk
-fi
+[ -f "/data/adb/magisk/util_functions.sh" ] && . /data/adb/magisk/util_functions.sh || require_new_magisk
 
 # Preperation for flashable zips
 setup_flashable
@@ -64,32 +63,33 @@ fi
 
 # Extract prop file
 unzip -o "$ZIPFILE" module.prop -d $TMPDIR >&2
-if [ ! -f $TMPDIR/module.prop ]; then
-abort "[!] Unable to extract zip file!"
-fi
+[ ! -f $TMPDIR/module.prop ] && abort "[!] Unable to extract zip file!"
 
+# Mod vars
+NVBASE="/data/adb"
 $BOOTMODE && MODDIRNAME=modules_update || MODDIRNAME=modules
-MODULEROOT=$NVBASE/$MODDIRNAME
-MODID=$(grep_prop id $TMPDIR/module.prop)
-MODPATH=$MODULEROOT/$MODID
-MODNAME=$(grep_prop name $TMPDIR/module.prop)
+MODULEROOT="$NVBASE/$MODDIRNAME"
+MODID="$(grep_prop id $TMPDIR/module.prop)"
+MODPATH="$MODULEROOT/$MODID"
+MODNAME="$(grep_prop name $TMPDIR/module.prop)"
 
 # Create mod paths
-rm -rf $MODPATH 2>/dev/null
-mkdir -p $MODPATH
+rm -rf "$MODPATH" 2>/dev/null
+mkdir -p "$MODPATH"
 
 ##############
 # INSTALLATION
 ##############
 
-# Extract 01
-unzip -o "$ZIPFILE" 'addon/*' setup.sh inject.sh -d $TMPDIR >&2
+# Extract to $MODPATH
+unzip -o "$ZIPFILE" -d $MODPATH >&2
 
 # Load install script
-. $TMPDIR/setup.sh
+. "$MODPATH/setup.sh"
 
-if [ "$SKIPMOUNT" = "true" ]; then
-touch "$MODPATH/skip_mount"
+# Remove all old files before doing installation if want to
+if [ "$CLEANSERVICE" = "true" ]; then
+rm -rf /data/adb/modules/${MODID}/* 2>/dev/null
 fi
 
 # Enable debugging if true
@@ -99,51 +99,48 @@ else
 set +x
 fi
 
-# Remove all old files before doing installation if want to
-if [ "$CLEANSERVICE" = "true" ]; then
-rm -rf /data/adb/modules/${MODID}/*
-fi 
-
 # Callback 01
-mod_info_print
+info_print
 
-# Extract 02
-unzip -o "$ZIPFILE" -x 'META-INF/*' 'addon/*' setup.sh inject.sh -d $MODPATH >&2
-ui_print "[*] Extracting module files..."
+# Callback 02
+init_main
 
-# Load vol key selector
-. "$TMPDIR/addon/Volume-Key-Selector/install.sh"
+# Skip mount
+if [ "$SKIPMOUNT" = "true" ]; then
+touch "$MODPATH/skip_mount"
+fi
 
-# Load main
-. "$TMPDIR/inject.sh"
+# Default permissions
+set_perm_recursive "$MODPATH" 0 0 0755 0644
 
 # Set permissions
 set_permissions
 
 # Handle replace folders
 for TARGET in $REPLACE; do
-  ui_print "[*] Replace target: $TARGET"
-  mktouch $MODPATH$TARGET/.replace
+ui_print "[*] Replace target: $TARGET"
+mktouch "$MODPATH$TARGET/.replace"
 done
 
 if $BOOTMODE; then
-  # Update info for Magisk Manager
-  mktouch $NVBASE/modules/$MODID/update
-  cp -af "$MODPATH/module.prop" "$NVBASE/modules/$MODID/module.prop"
+# Update info for Magisk app
+mktouch $NVBASE/modules/$MODID/update
+cp -af "$MODPATH/module.prop" "$NVBASE/modules/$MODID/module.prop"
 fi
 
 # Copy over custom sepolicy rules
-if [ -f $MODPATH/sepolicy.rule -a -e $PERSISTDIR ]; then
-  ui_print "[*] Installing custom sepolicy patch"
-  PERSISTMOD=$PERSISTDIR/magisk/$MODID
-  mkdir -p $PERSISTMOD
-  cp -af "$MODPATH/sepolicy.rule" "$PERSISTMOD/sepolicy.rule"
+if [ -f "$MODPATH/sepolicy.rule" ]; then
+ui_print "[*] Installing custom sepolicy rules"
+copy_sepolicy_rules
 fi
 
 # Remove stuffs that don't belong to modules
+rm -rf "$MODPATH/META-INF"
+rm -rf "$MODPATH/addon"
 rm -rf "$MODPATH/LICENSE"
 rm -rf "$MODPATH/README.md"
-rm -rf "$MODPATH/changelog"
+rm -rf "$MODPATH/setup.sh"
+rm -rf "$MODPATH/system/placeholder"
 
 ##############
 # Finalizing
@@ -153,7 +150,7 @@ cd /
 if ! $BOOTMODE; then
 recovery_cleanup
 fi
-rm -rf $TMPDIR
+rm -rf "$TMPDIR"
 
 ui_print "[*] Done"
 exit 0

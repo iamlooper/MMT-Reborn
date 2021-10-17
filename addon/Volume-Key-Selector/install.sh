@@ -1,7 +1,7 @@
 # External Tools
 
-chmod -R 0755 "$TMPDIR/addon/Volume-Key-Selector/tools"
-export PATH=$TMPDIR/addon/Volume-Key-Selector/tools/$ARCH32:$PATH
+chmod -R 0755 "$MODPATH/addon/Volume-Key-Selector/tools"
+export PATH=$MODPATH/addon/Volume-Key-Selector/tools/$ARCH32:$PATH
 
 keytest(){
   ui_print "[*] Vol Key Test"
