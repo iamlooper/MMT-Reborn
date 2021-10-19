@@ -13,16 +13,9 @@ PERSISTDIR="/sbin/.magisk/mirror/persist"
 rm -rf "$TMPDIR" 2>/dev/null
 mkdir -p "$TMPDIR"
 
-# echo before loading util_functions
+# Echo before loading util_functions
 ui_print(){ 
 echo "$1"
-}
-
-require_new_magisk(){
-  ui_print "*******************************"
-  ui_print " Please install Magisk v19.0+! "
-  ui_print "*******************************"
-  exit 1
 }
 
 load_vksel(){
@@ -39,7 +32,7 @@ ZIPFILE=$3
 mount /data 2>/dev/null
 
 # Load utility functions
-[ -f "/data/adb/magisk/util_functions.sh" ] && . /data/adb/magisk/util_functions.sh || require_new_magisk
+. "/data/adb/magisk/util_functions.sh"
 
 # Preperation for flashable zips
 setup_flashable
@@ -51,11 +44,7 @@ mount_partitions
 api_level_arch_detect
 
 # Setup busybox and binaries
-if $BOOTMODE; then
-boot_actions
-else
-recovery_actions
-fi
+$BOOTMODE && boot_actions || recovery_actions
 
 ##############
 # PREPARATION
@@ -63,7 +52,7 @@ fi
 
 # Extract prop file
 unzip -o "$ZIPFILE" module.prop -d $TMPDIR >&2
-[ ! -f $TMPDIR/module.prop ] && abort "[!] Unable to extract zip file!"
+[ ! -f "$TMPDIR/module.prop" ] && abort "[!] Unable to extract zip file!"
 
 # Mod vars
 NVBASE="/data/adb"
@@ -82,14 +71,14 @@ mkdir -p "$MODPATH"
 ##############
 
 # Extract to $MODPATH
-unzip -o "$ZIPFILE" -d $MODPATH >&2
+unzip -o "$ZIPFILE" -d "$MODPATH" >&2
 
 # Load install script
 . "$MODPATH/setup.sh"
 
 # Remove all old files before doing installation if want to
 if [ "$CLEANSERVICE" = "true" ]; then
-rm -rf /data/adb/modules/${MODID}/* 2>/dev/null
+rm -rf /data/adb/modules/${MODID}/*
 fi
 
 # Enable debugging if true
@@ -99,10 +88,15 @@ else
 set +x
 fi
 
-# Callback 01
+# Print mod info
 info_print
 
-# Callback 02
+# Auto vskel load
+if [ "$AUTOVKSEL" = "true" ]; then
+load_vksel
+fi
+
+# Main
 init_main
 
 # Skip mount
@@ -110,11 +104,11 @@ if [ "$SKIPMOUNT" = "true" ]; then
 touch "$MODPATH/skip_mount"
 fi
 
-# Default permissions
-set_perm_recursive "$MODPATH" 0 0 0755 0644
-
 # Set permissions
 set_permissions
+
+# Do cleanup
+do_cleanup
 
 # Handle replace folders
 for TARGET in $REPLACE; do
@@ -137,8 +131,6 @@ fi
 # Remove stuffs that don't belong to modules
 rm -rf "$MODPATH/META-INF"
 rm -rf "$MODPATH/addon"
-rm -rf "$MODPATH/LICENSE"
-rm -rf "$MODPATH/README.md"
 rm -rf "$MODPATH/setup.sh"
 rm -rf "$MODPATH/system/placeholder"
 
