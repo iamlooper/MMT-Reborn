@@ -1,6 +1,7 @@
 #!/sbin/sh
+
 ###########################
-# MMT Bourne Setup Script
+# MMT Reborn Logic
 ###########################
 
 ############
@@ -8,13 +9,14 @@
 ############
 
 # Uncomment if you want to skip mount for your module
-# Uncomment if you want to clean old files in module before injecting new module
-# Uncomment if you want to load vskel after module info print. If you want to manually load it, consider using load_vksel function
-# Uncomment DEBUG if you want full debug logs (Saved To Internal Storage)
 #SKIPMOUNT=true
-CLEANSERVICE=true
+# Uncomment if you want to clean old files in module before injecting new module
+#CLEANSERVICE=true
+# Uncomment if you want to load vskel after module info print. If you want to manually load it, consider using load_vksel function
 #AUTOVKSEL=true
-DEBUG=true
+# Uncomment DEBUG if you want store debug logs of installation
+#DEBUG=true
+
 
 ############
 # Replace List
@@ -37,35 +39,34 @@ REPLACE="
 ############
 
 # Remove unnecessary stuff
-#do_cleanup(){
-#rm -rf "$MODPATH/LICENSE" 2>/dev/null
-#rm -rf "$MODPATH/README.md" 2>/dev/null
-#}
+do_cleanup(){
+  rmtouch "$MODPATH/system/placeholder"
+}
 
 ############
 # Permissions
 ############
 
 # Set permissions
-#set_permissions(){
-#set_perm_recursive "$MODPATH" 0 0 0755 0644
-#}
+set_permissions(){
+  set_perm_recursive "$MODPATH" 0 0 0755 0644
+}
 
 ############
 # Info Print
 ############
 
 # Set what you want to be displayed on header of installation process
-#info_print(){
-#awk '{print}' "$MODPATH/banner"
-#ui_print ""
-#}
+info_print(){
+  awk '{print}' "$MODPATH/banner"
+  ui_print ""
+}
 
 ############
 # Main
 ############
 
 # Change the logic to whatever you want
-#init_main(){
-#ui_print ""
-#}
+int_main(){
+  ui_print ""
+}

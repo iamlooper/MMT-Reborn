@@ -1,14 +1,15 @@
-# MMT-BOURNE
+# MMT Reborn
 
 <div align="center">
   <!-- Version -->
-    <img src="https://img.shields.io/badge/Version-v1.1-yellow.svg?longCache=true&style=popout-square"
+    <img src="https://img.shields.io/badge/Version-v1.2-black.svg?longCache=true&style=popout-square"
       alt="Version" />
 
 <div align="center">
-  <strong>MMT Bourne, a simple, customizable, easy-to-use magisk module template.
+  <strong>MMT Reborn, a simple, customizable, easy-to-use magisk module template.
 </div>
 
 ## Usage
-### Read setup.sh comments and working structure.
-### Don't try to fork.
+### Read setup.sh comments
+### Understand the working structure
+### Don't fork

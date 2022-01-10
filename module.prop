@@ -1,6 +1,6 @@
-id=mmt_bourne
-name=MMT-BOURNE
-version=v1.1
-versionCode=18
-author=@iamlooper
-description=MMT-BOURNE, a simple, customizable and easy-to-use magisk module template.
+id=mmt_reborn
+name=MMT Reborn
+version=v1.2
+versionCode=27
+author=@iamloooper
+description=MMT Reborn, a simple, customizable and easy-to-use magisk module template.

@@ -12,13 +12,13 @@ keytest(){
     ui_print "[*] Try again:"
     timeout 9 keycheck
     local SEL=$?
-    [ "$SEL" = "143" ] && abort "[!] Vol key not detected!" || return 1
+    [[ "$SEL" == "143" ]] && abort "[!] Vol key not detected!" || return 1
   fi
 }
 
 chooseport(){
   # Original idea by chainfire @xda-developers, improved on by ianmacd @xda-developers
-  #note from chainfire @xda-developers: getevent behaves weird when piped, and busybox grep likes that even less than toolbox/toybox grep
+  # Note from chainfire @xda-developers: getevent behaves weird when piped, and busybox grep likes that even less than toolbox/toybox grep
   while true; do
     /system/bin/getevent -lc 1 2>&1 | /system/bin/grep VOLUME | /system/bin/grep " DOWN" > $TMPDIR/events
     if $(cat $TMPDIR/events 2>/dev/null | /system/bin/grep VOLUME >/dev/null); then
@@ -39,15 +39,15 @@ chooseportold(){
     keycheck
     keycheck
     local SEL=$?
-    if [ "$1" = "UP" ]; then
+    if [[ "$1" == "UP" ]]; then
       UP=$SEL
       break
-    elif [ "$1" = "DOWN" ]; then
+    elif [[ "$1" == "DOWN" ]]; then
       DOWN=$SEL
       break
-    elif [ "$SEL" = "$UP" ]; then
+    elif [[ "$SEL" == "$UP" ]]; then
       return 0
-    elif [ "$SEL" = "$DOWN" ]; then
+    elif [[ "$SEL" == "$DOWN" ]]; then
       return 1
     fi
   done
