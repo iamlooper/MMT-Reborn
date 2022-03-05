@@ -1,5 +1,5 @@
 # Don't modify anything after this
-if [[ -f "$INFO" ]]; then
+[[ -f "$INFO" ]] && {
   while read LINE; do
     if [[ "$(echo -n "$LINE" | tail -c 1)" == "~" ]]; then
       continue
@@ -14,4 +14,4 @@ if [[ -f "$INFO" ]]; then
     fi
   done < $INFO
   rm -f "$INFO"
-fi
+}

@@ -14,24 +14,18 @@ rm -rf "$TMPDIR" 2>/dev/null
 mkdir -p "$TMPDIR"
 
 # Echo before loading util_functions
-ui_print(){ 
-  echo "$1"
-}
+ui_print() { echo "$1"; }
 
-load_vksel(){
-  source "$MODPATH/addon/Volume-Key-Selector/install.sh"
-}
+load_vksel() { source "$MODPATH/addon/Volume-Key-Selector/install.sh"; }
 
-rmtouch(){
-  [[ -e "$1" ]] && rm -rf "$1" 2>/dev/null
-}
+rmtouch() { [[ -e "$1" ]] && rm -rf "$1" 2>/dev/null; }
 
 ####################
 # SETUP ENVIRONMENT
 ####################
 
-OUTFD=$2
-ZIPFILE=$3
+OUTFD="$2"
+ZIPFILE="$3"
 
 mount /data 2>/dev/null
 
@@ -55,7 +49,7 @@ $BOOTMODE && boot_actions || recovery_actions
 ##############
 
 # Extract prop file
-unzip -o "$ZIPFILE" module.prop -d $TMPDIR >&2
+unzip -o "$ZIPFILE" module.prop -d "$TMPDIR" >&2
 [[ ! -f "$TMPDIR/module.prop" ]] && abort "[!] Unable to extract zip file!"
 
 # Mod vars
@@ -82,7 +76,7 @@ source "$MODPATH/setup.sh"
 
 # Remove all old files before doing installation if want to
 if [[ "$CLEANSERVICE" == "true" ]]; then
-  rm -rf /data/adb/modules/${MODID}/*
+  rm -rf "/data/adb/modules/$MODID"
 fi
 
 # Enable debugging if true
@@ -116,19 +110,19 @@ do_cleanup
 
 # Handle replace folders
 for TARGET in $REPLACE; do
-  ui_print "[*] Replace target: $TARGET"
+  ui_print "[*] Replace target : $TARGET"
   mktouch "$MODPATH$TARGET/.replace"
 done
 
 if $BOOTMODE; then
   # Update info for Magisk app
-  mktouch $NVBASE/modules/$MODID/update
+  mktouch "$NVBASE/modules/$MODID/update"
   cp -af "$MODPATH/module.prop" "$NVBASE/modules/$MODID/module.prop"
 fi
 
 # Copy over custom sepolicy rules
 if [[ -f "$MODPATH/sepolicy.rule" ]]; then
-  ui_print "[*] Installing custom sepolicy rules"
+  ui_print "[*] Installing custom sepolicy rules..."
   copy_sepolicy_rules
 fi
 

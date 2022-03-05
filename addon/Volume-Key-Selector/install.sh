@@ -1,9 +1,10 @@
-# External Tools
+#!/system/bin/sh
 
+# External Tools 
 chmod -R 0755 "$MODPATH/addon/Volume-Key-Selector/tools"
-export PATH=$MODPATH/addon/Volume-Key-Selector/tools/$ARCH32:$PATH
+export PATH="$MODPATH/addon/Volume-Key-Selector/tools/$ARCH32:$PATH"
 
-keytest(){
+keytest() {
   ui_print "[*] Vol Key Test"
   ui_print "[*] Press a Vol Key: "
   if $(timeout 9 /system/bin/getevent -lc 1 2>&1 | /system/bin/grep "VOLUME" | /system/bin/grep "DOWN" > $TMPDIR/events); then
@@ -16,7 +17,7 @@ keytest(){
   fi
 }
 
-chooseport(){
+chooseport() {
   # Original idea by chainfire @xda-developers, improved on by ianmacd @xda-developers
   # Note from chainfire @xda-developers: getevent behaves weird when piped, and busybox grep likes that even less than toolbox/toybox grep
   while true; do
@@ -32,7 +33,7 @@ chooseport(){
   fi
 }
 
-chooseportold(){
+chooseportold() {
   # Keycheck binary by someone755 @Github, idea for code below by Zappo @xda-developers
   # Calling it first time detects previous input. Calling it second time will do what we want
   while true; do

@@ -39,7 +39,7 @@ REPLACE="
 ############
 
 # Remove unnecessary stuff
-do_cleanup(){
+do_cleanup() {
   rmtouch "$MODPATH/system/placeholder"
 }
 
@@ -48,7 +48,7 @@ do_cleanup(){
 ############
 
 # Set permissions
-set_permissions(){
+set_permissions() {
   set_perm_recursive "$MODPATH" 0 0 0755 0644
 }
 
@@ -57,7 +57,7 @@ set_permissions(){
 ############
 
 # Set what you want to be displayed on header of installation process
-info_print(){
+info_print() {
   awk '{print}' "$MODPATH/banner"
   ui_print ""
 }
@@ -67,6 +67,6 @@ info_print(){
 ############
 
 # Change the logic to whatever you want
-int_main(){
+int_main() {
   ui_print ""
 }
