@@ -12,7 +12,7 @@ keytest() {
   else
     ui_print "[*] Try again:"
     timeout 9 keycheck
-    local SEL=$?
+    local SEL="$?"
     [[ "$SEL" == "143" ]] && abort "[!] Vol key not detected!" || return 1
   fi
 }
