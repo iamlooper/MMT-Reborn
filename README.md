@@ -2,7 +2,7 @@
 
 <div align="center">
   <!-- Version -->
-    <img src="https://img.shields.io/badge/Version-v1.4-blue.svg?longCache=true&style=popout-square"
+    <img src="https://img.shields.io/badge/Version-v1.5-blue.svg?longCache=true&style=popout-square"
       alt="Version" />
 
 <div align="center">
@@ -10,6 +10,6 @@
 </div>
 
 ## Usage
-### Read setup.sh comments
-### Understand the working structure
-### Don't fork
+- Read setup.sh comments
+- Understand the working structure
+- Don't fork

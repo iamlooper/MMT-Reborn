@@ -6,18 +6,24 @@
 
 umask 0022
 
-# Global vars
-TMPDIR="/dev/tmp"
-PERSISTDIR="/sbin/.magisk/mirror/persist"
+# Global vars.
+TMPDIR='/dev/tmp'
+PERSISTDIR='/sbin/.magisk/mirror/persist'
+NVBASE='/data/adb'
+"$BOOTMODE" && MODDIRNAME='modules_update' || MODDIRNAME='modules'
+MODULEROOT="$NVBASE/$MODDIRNAME"
 
-# Echo before loading util_functions
+# Echo before loading util_functions.
 ui_print() { echo "$@"; }
 
+# Load VKS.
 load_vksel() { source "$MODPATH/addon/Volume-Key-Selector/install.sh"; }
 
-rmtouch() { [[ -e "$1" ]] && rm -rf "$1" 2>/dev/null; }
+# Remove if exists.
+rm_exist() { [[ -e "$1" ]] && rm -rf "$1" 2>/dev/null; }
 
-rmtouch "$TMPDIR"
+# Create temp dir.
+rm_exist "$TMPDIR"
 mkdir -p "$TMPDIR"
 
 ####################
@@ -27,100 +33,98 @@ mkdir -p "$TMPDIR"
 OUTFD="$2"
 ZIPFILE="$3"
 
-mount /data 2>/dev/null
+# Mount /data to setup environment for mod installation.
+mount '/data' 2>/dev/null
 
-# Load utility functions
-source "/data/adb/magisk/util_functions.sh"
+# Load utility functions.
+source "$NVBASE/magisk/util_functions.sh"
 
-# Preperation for flashable zips
+# Preperation for flashable zips.
 setup_flashable
 
-# Mount partitions
+# Mount partitions.
 mount_partitions
 
-# Detect version and architecture
+# Detect version and architecture.
 api_level_arch_detect
 
-# Setup busybox and binaries
+# Setup busybox and binaries.
 "$BOOTMODE" && boot_actions || recovery_actions
 
 ##############
 # PREPARATION
 ##############
 
-# Extract prop file
+# Extract prop file.
 unzip -o "$ZIPFILE" module.prop -d "$TMPDIR" >&2
 [[ ! -f "$TMPDIR/module.prop" ]] && abort "[!] Unable to extract zip file!"
 
-# Mod vars
-NVBASE="/data/adb"
-$BOOTMODE && MODDIRNAME=modules_update || MODDIRNAME=modules
-MODULEROOT="$NVBASE/$MODDIRNAME"
+# Get module info.
 MODID="$(grep_prop "id" "$TMPDIR/module.prop")"
 MODPATH="$MODULEROOT/$MODID"
 MODNAME="$(grep_prop "name" "$TMPDIR/module.prop")"
 
-# Create mod paths
-rmtouch "$MODPATH"
+# Create mod path.
+rm_exist "$MODPATH"
 mkdir -p "$MODPATH"
 
 ##############
 # INSTALLATION
 ##############
 
-# Extract to $MODPATH
+# Extract to module files to $MODPATH.
 unzip -o "$ZIPFILE" -d "$MODPATH" >&2
 
-# Load install script
+# Load mod installation setup script.
 source "$MODPATH/setup.sh"
 
-# Remove all old files before doing installation if want to
+# Remove all old files before doing installation if want to.
 "$CLEANSERVICE" && rm -rf "/data/adb/modules/$MODID"
 
-# Enable debugging if true
+# Enable debugging if true.
 "$DEBUG" && set -x || set +x
 
-# Print mod info
+# Print mod info.
 info_print
 
-# Auto vskel load
+# Auto vskel load.
 "$AUTOVKSEL" && load_vksel
 
-# Main
+# Initialize main.
 init_main
 
-# Skip mount
+# Skip mount.
 "$SKIPMOUNT" && touch "$MODPATH/skip_mount"
 
-# Set permissions
+# Set permissions.
 set_permissions
 
-# Handle replace folders
-for TARGET in $REPLACE; do
+# Handle replace folders.
+for TARGET in "$REPLACE"; do
   ui_print "[*] Replace target: $TARGET"
   mktouch "$MODPATH$TARGET/.replace"
 done
 
+# Update info for Magisk app.
 "$BOOTMODE" && {
-  # Update info for Magisk app
   mktouch "$NVBASE/modules/$MODID/update"
   cp -af "$MODPATH/module.prop" "$NVBASE/modules/$MODID/module.prop"
 }
 
-# Copy over custom sepolicy rules
+# Copy over custom sepolicy rules.
 [[ -f "$MODPATH/sepolicy.rule" ]] && {
   ui_print "[*] Installing custom sepolicy rules..."
   copy_sepolicy_rules
 }
 
-# Remove stuffs that don't belong to modules
-rmtouch "$MODPATH/META-INF"
-rmtouch "$MODPATH/addon"
-rmtouch "$MODPATH/setup.sh"
-rmtouch "$MODPATH/LICENSE"
-rmtouch "$MODPATH/README.md"
-rmtouch "$MODPATH/system/bin/placeholder"
-rmtouch "$MODPATH/zygisk/placeholder"
+# Remove stuffs that don't belong to modules.
+rm_exist "$MODPATH/META-INF"
+rm_exist "$MODPATH/addon"
+rm_exist "$MODPATH/setup.sh"
+rm_exist "$MODPATH/LICENSE"
+rm_exist "$MODPATH/README.md"
+rm_exist "$MODPATH/system/bin/placeholder"
+rm_exist "$MODPATH/zygisk/placeholder"
 
 ##############
 # Finalizing
@@ -128,5 +132,5 @@ rmtouch "$MODPATH/zygisk/placeholder"
 
 cd /
 "$BOOTMODE" || recovery_cleanup
-rmtouch "$TMPDIR"
+rm_exist "$TMPDIR"
 exit 0
