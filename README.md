@@ -1,13 +1,10 @@
 # MMT Reborn
-
 <div align="center">
-    <img src="https://img.shields.io/badge/Version-v1.5-blue.svg?longCache=true&style=popout-square" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-v1.6.0-blue.svg?longCache=true&style=popout-square" alt="Version" />
 </div>
 
-<strong>MMT Reborn, a simple, customizable, easy-to-use magisk module template.
+MMT Reborn, a simple, customizable, easy-to-use magisk module template.
 
 ## Usage
-- Read setup.sh comments
-- Understand the working structure
-- Don't fork
-
+- Read comments in the code to understand its working.
+- Don't fork, this is a public template.

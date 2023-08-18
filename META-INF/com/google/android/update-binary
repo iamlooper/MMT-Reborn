@@ -100,10 +100,12 @@ init_main
 set_permissions
 
 # Handle replace folders.
-for TARGET in "$REPLACE"; do
-  ui_print "[*] Replace target: $TARGET"
-  mktouch "$MODPATH$TARGET/.replace"
-done
+[[ ! -z "$REPLACE" ]] && {
+  for TARGET in "$REPLACE"; do
+    ui_print "[*] Replace target: $TARGET"
+    mktouch "$MODPATH$TARGET/.replace"
+  done
+}
 
 # Update info for Magisk app.
 "$BOOTMODE" && {
@@ -123,8 +125,8 @@ rm_exist "$MODPATH/addon"
 rm_exist "$MODPATH/setup.sh"
 rm_exist "$MODPATH/LICENSE"
 rm_exist "$MODPATH/README.md"
-rm_exist "$MODPATH/system/bin/placeholder"
-rm_exist "$MODPATH/zygisk/placeholder"
+rm_exist "$MODPATH/system/bin/proxy"
+rm_exist "$MODPATH/zygisk/proxy"
 
 ##############
 # Finalizing

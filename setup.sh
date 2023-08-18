@@ -30,8 +30,7 @@ REPLACE_EXAMPLE="
 /system/framework
 "
 # Construct your own list here.
-REPLACE="
-"
+REPLACE=""
 
 ############
 # Permissions
@@ -39,7 +38,7 @@ REPLACE="
 
 # Set permissions.
 set_permissions() {
-  set_perm "$MODPATH/placeholder" 0 0 0755 # For files.
+  set_perm "$MODPATH/system/bin/proxy" 0 0 0755 # For files.
   set_perm_recursive "$MODPATH/system" 0 0 0777 0755 # For folders.
 }
 
@@ -50,7 +49,7 @@ set_permissions() {
 # Set what you want to be displayed on header of installation process.
 info_print() {
   awk '{print}' "$MODPATH/banner"
-  ui_print ""
+  ui_print "Hello World!"
 }
 
 ############
@@ -59,5 +58,5 @@ info_print() {
 
 # Modify the function to whatever you want.
 init_main() {
-  ui_print ""
+  ui_print "Hello World!"
 }
