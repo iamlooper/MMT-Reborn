@@ -3,7 +3,7 @@
 # External Tools.
 chmod -R 0755 "$MODPATH/addon/VKS/tools"
 [[ "$ARCH" == "arm" ]] || [[ "$ARCH" == "arm64" ]] && export PATH="$MODPATH/addon/VKS/tools/arm/:$PATH"
-[[ "$ARCH" == "x86" ]] || [[ "$ARCH" == "x86" ]] && export PATH="$MODPATH/addon/VKS/tools/x64/:$PATH"
+[[ "$ARCH" == "x86" ]] || [[ "$ARCH" == "x64" ]] && export PATH="$MODPATH/addon/VKS/tools/x86/:$PATH"
 
 keytest() {
   ui_print ""
