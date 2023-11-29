@@ -1,20 +1,20 @@
 #!/sbin/sh
 
 ###########################
-# MMT Reborn
+# MMT Reborn Setup
 ###########################
 
 ############
 # Config Vars
 ############
 
-# Set this to true if you want to skip mount for your module.
+# Set this to true if you don't want to mount the system folder in your module.
 SKIPMOUNT=false
-# Set this to true if you want to clean old files in module before injecting new module.
+# Set this to true if you want to clean old files in module before flashing new module.
 CLEANSERVICE=false
 # Set this to true if you want to load vskel after module info print. If you want to manually load it, consider using load_vksel function.
 AUTOVKSEL=false
-# Set this to true if you want store debug logs of installation.
+# Set this to true if you want to debug the installation.
 DEBUG=true
 
 ############
@@ -30,7 +30,8 @@ REPLACE_EXAMPLE="
 /system/framework
 "
 # Construct your own list here.
-REPLACE=""
+REPLACE="
+"
 
 ############
 # Permissions
@@ -38,8 +39,7 @@ REPLACE=""
 
 # Set permissions.
 set_permissions() {
-  set_perm "$MODPATH/system/bin/proxy" 0 0 0755 # For files.
-  set_perm_recursive "$MODPATH/system" 0 0 0777 0755 # For folders.
+  set_perm_recursive "$MODPATH/libs" 0 0 0777 0755
 }
 
 ############
@@ -48,15 +48,16 @@ set_permissions() {
 
 # Set what you want to be displayed on header of installation process.
 info_print() {
-  awk '{print}' "$MODPATH/banner"
-  ui_print "Hello World!"
+  ui_print ""
+  print_title "MMT Reborn" "By @iamlooper @ telegram"
 }
 
 ############
 # Main
 ############
 
-# Modify the function to whatever you want.
+# Change the logic to whatever you want.
 init_main() {
+  ui_print ""
   ui_print "Hello World!"
 }
