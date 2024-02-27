@@ -327,10 +327,12 @@ install_module() {
 
   # Handle replace folders.
   "$KSU" || {
-    for TARGET in "$REPLACE"; do
-      ui_print "[Info] Replace target: $TARGET"
-      mktouch "$MODPATH$TARGET/.replace"
-    done
+    [[ ! -z "$REPLACE" ]] && {
+      for TARGET in "$REPLACE"; do
+        ui_print "[Info] Replace target: $TARGET"
+        mktouch "$MODPATH$TARGET/.replace"
+      done
+    }
   }
 
   # Update module info.

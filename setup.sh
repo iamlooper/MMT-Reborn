@@ -23,15 +23,12 @@ DEBUG=true
 
 # List all directories you want to directly replace in the system.
 # Construct your list in the following example format.
-REPLACE_EXAMPLE="
-/system/app/Youtube
+REPLACE_EXAMPLE="/system/app/Youtube
 /system/priv-app/SystemUI
 /system/priv-app/Settings
-/system/framework
-"
+/system/framework"
 # Construct your own list here.
-REPLACE="
-"
+REPLACE=""
 
 ############
 # Permissions
