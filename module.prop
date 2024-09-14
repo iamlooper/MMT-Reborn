@@ -1,5 +1,6 @@
 id=mmt_reborn
 name=MMT Reborn
-version=v1.7.0
+version=v1.8.0
+versionCode=21
 author=iamlooper @ telegram
-description=MMT Reborn, a simple, customizable and easy-to-use module template.
+description=A simple, customizable and easy-to-use module template.
