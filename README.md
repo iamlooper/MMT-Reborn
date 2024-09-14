@@ -1,9 +1,8 @@
 # MMT Reborn
 A simple, customizable, easy-to-use module template.
 
-## Usage
-- Read comments in the code to understand its working
-- Works on Magisk/KSU/APatch
+## Notes
+- Works on Magisk, KernelSU, and APatch
 - Don't fork, this is a public template
 
 ## Credits
